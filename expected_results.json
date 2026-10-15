@@ -1,0 +1,25 @@
+{
+  "2026-10-08": {
+    "recruiters": 6,
+    "job_requisitions": 20,
+    "applications": 101,
+    "application_status_audit": 348
+  },
+  "2026-10-09": {
+    "recruiters": 5,
+    "job_requisitions": 20,
+    "applications": 102,
+    "application_status_audit": 357
+  },
+  "clean_second_snapshot": {
+    "current_requisitions": 20,
+    "open_requisitions": 15,
+    "closed_requisitions": 5,
+    "current_recruiters": 5,
+    "current_applications": 102,
+    "distinct_candidates": 92,
+    "status_events": 357,
+    "applications_advanced": 9,
+    "new_applications": 2
+  }
+}

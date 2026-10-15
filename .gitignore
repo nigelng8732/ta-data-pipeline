@@ -1,0 +1,25 @@
+# Raw Data
+/data/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+profiles.yml
+*.pem
+*.p8
+*.key
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# dbt generated files
+target/
+dbt_packages/
+logs/
+
+# Astro local files
+.astro/
