@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: ta_raw
+    description: Daily TA snapshots loaded from S3.
+    database: TA_DATA_DB
+    schema: RAW
+    tables:
+      - name: job_requisitions
+        identifier: JOB_REQUISITIONS
+
+      - name: applications
+        identifier: APPLICATIONS
+         
+      - name: app_status_audit
+        identifier: APPLICATION_STATUS_AUDIT
+
+      - name: recruiters
+        identifier: RECRUITERS
