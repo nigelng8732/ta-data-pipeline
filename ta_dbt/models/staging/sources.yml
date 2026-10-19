@@ -8,12 +8,34 @@ sources:
     tables:
       - name: job_requisitions
         identifier: JOB_REQUISITIONS
+        columns:
+          - name: job_req_id
+            description: Primary key of the JR table
+            data_tests: 
+              - unique
+              - not_null
 
       - name: applications
         identifier: APPLICATIONS
+        columns:
+          - name: application_id
+            description: Primary key of the Application table
+            data_tests: 
+              - unique
+              - not_null
          
       - name: app_status_audit
         identifier: APPLICATION_STATUS_AUDIT
+        columns:
+          - name: application_id
+            data_tests: 
+              - not_null
 
       - name: recruiters
         identifier: RECRUITERS
+        columns:
+          - name: recruiter_id
+            description: Primary key of the Recruiters table
+            data_tests: 
+              - unique
+              - not_null
