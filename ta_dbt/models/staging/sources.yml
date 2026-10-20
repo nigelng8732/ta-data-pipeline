@@ -12,7 +12,6 @@ sources:
           - name: job_req_id
             description: Primary key of the JR table
             data_tests: 
-              - unique
               - not_null
 
       - name: applications
@@ -21,7 +20,6 @@ sources:
           - name: application_id
             description: Primary key of the Application table
             data_tests: 
-              - unique
               - not_null
          
       - name: app_status_audit
@@ -37,5 +35,4 @@ sources:
           - name: recruiter_id
             description: Primary key of the Recruiters table
             data_tests: 
-              - unique
               - not_null

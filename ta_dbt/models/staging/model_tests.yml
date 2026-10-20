@@ -1,0 +1,7 @@
+models:
+  - name: stg_job_requisition
+    columns: 
+      - name: job_req_id
+        data_tests: 
+          - not_null
+          - unique
