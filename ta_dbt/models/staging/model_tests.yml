@@ -5,3 +5,21 @@ models:
         data_tests: 
           - not_null
           - unique
+  - name: stg_app_status_audit
+    columns:
+      - name: application_id
+        data_tests:
+          - not_null
+  - name: stg_applications
+    columns:
+      - name: application_id
+        data_tests:
+          - not_null
+          - unique
+  - name: stg_recruiters
+    columns:
+      - name: recruiter_id
+        data_tests:
+          - not_null
+          - unique
+    
