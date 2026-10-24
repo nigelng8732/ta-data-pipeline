@@ -26,7 +26,9 @@ qualify row_number() over (
         a.candidate_id,
         a.candidate_name,
         a.application_status,
-        a.candidate_country
+        a.candidate_country,
+        a.application_date,
+        a.snapshot_date
     order by
         a.source_filename,
         a.source_row_number,
