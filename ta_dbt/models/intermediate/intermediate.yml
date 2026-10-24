@@ -1,0 +1,41 @@
+version: 2
+
+models: 
+  - name: int_requisitions_validated
+    description: Requisitions with recruiter and date validation.
+    columns:
+      - name: job_req_id
+        data_tests:
+          - not_null
+          - unique
+      - name: is_valid
+        data_tests:
+          - not_null
+  
+  - name: int_app_status_audit_validated
+    description: Applications with application status validation.
+    columns:
+      - name: application_id
+        data_tests:
+          - not_null
+      - name: is_valid
+        data_tests:
+          - not_null
+  
+  - name: int_applications_validated
+    description: Applications with candidate, timestamp, status and requisition checks.
+    columns:
+      - name: application_id
+        data_tests:
+          - unique
+          - not_null
+      - name: is_valid
+        data_tests:
+          - not_null
+  - name: int_application_audit_summary
+    description: Audit quality and latest valid status per application.
+    columns:
+      - name: application_id
+        data_tests:
+          - unique
+          - not_null
