@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: fct_applications
+    description: >
+      One row per valid application in the selected snapshot.
+      Application counts differ from distinct candidate counts because
+      a candidate can have multiple applications.
+    columns: 
+      - name: application_id
+        data_tests:
+          - not_null
+          - unique
+      - name: job_req_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_requisitions_validated')
+                field: job_req_id
+      - name: candidate_id
+        data_tests:
+          - not_null
+      - name: application_date
+        data_tests:
+          - not_null
+      - name: application_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - New Application
+                  - Screening
+                  - Hiring Manager Interview
+                  - Interview
+                  - Offer
+                  - Hired
+      - name: snapshot_date
+        data_tests:
+          - not_null
+      - name: latest_valid_audit_timestamp
+        data_tests:
+          - not_null
