@@ -36,10 +36,11 @@ models:
     # Config indicated by + and applies to all files under models/example/
     staging:
       +materialized: view
-      snowflake_warehouse: TA_DATA_PROJECT_WH
+      +snowflake_warehouse: TA_DATA_PROJECT_WH
     intermediate:
       +materialized: view
-      snowflake_warehouse: TA_DATA_PROJECT_WH
+      +snowflake_warehouse: TA_DATA_PROJECT_WH
     marts:
       +materialized: table
-      snowflake_warehouse: TA_DATA_PROJECT_WH
+      +schema: MARTS
+      +snowflake_warehouse: TA_DATA_PROJECT_WH

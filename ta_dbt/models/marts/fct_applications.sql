@@ -5,6 +5,7 @@ select
     application_date,
     application_status,
     snapshot_date,
-    latest_valid_audit_status
+    latest_valid_audit_status,
+    latest_valid_audit_timestamp
 from {{ ref('int_applications_validated') }}
 where is_valid = True

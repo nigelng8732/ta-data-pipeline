@@ -42,3 +42,12 @@ models:
       - name: latest_valid_audit_timestamp
         data_tests:
           - not_null
+  - name: rejected_applications
+    columns: 
+      - name: application_id
+        data_tests:
+          - unique
+          - not_null
+      - name: rejection_reason
+        data_tests:
+          - not_null
