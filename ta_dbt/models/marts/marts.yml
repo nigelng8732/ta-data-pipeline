@@ -51,3 +51,43 @@ models:
       - name: rejection_reason
         data_tests:
           - not_null
+  - name: dim_recruiters
+    columns:
+      - name: recruiter_id
+        data_tests:
+          - unique
+          - not_null
+      - name: recruiter_name
+        data_tests:
+          - not_null
+  - name: dim_requisitions
+    columns:
+      - name: job_req_id
+        data_tests: 
+          - unique
+          - not_null
+      - name: recruiter_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_recruiters')
+                field: recruiter_id  
+      - name: approved_date
+        data_tests:
+          - not_null
+  - name: fct_application_status_events
+    columns:
+      - name: application_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_applications')
+                field: application_id
+      - name: application_status
+        data_tests:
+          - not_null
+      - name: status_changed_at
+        data_tests:
+          - not_null
