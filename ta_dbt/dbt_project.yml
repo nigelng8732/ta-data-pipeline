@@ -5,7 +5,7 @@
 name: 'ta_dbt'
 version: '1.0.0'
 vars:
-  ta_snapshot_date: '2026-10-08'
+  ta_snapshot_date: '2026-10-09'
 
 # This setting configures which "profile" dbt uses for this project.
 profile: 'ta_dbt'
