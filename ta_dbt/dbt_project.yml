@@ -42,5 +42,4 @@ models:
       +snowflake_warehouse: TA_DATA_PROJECT_WH
     marts:
       +materialized: table
-      +schema: MARTS
       +snowflake_warehouse: TA_DATA_PROJECT_WH
