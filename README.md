@@ -23,47 +23,101 @@ I built this project to practise data engineering using a domain I am familiar w
 
 ```mermaid
 flowchart LR
-    CSV["Synthetic TA extracts<br/>Four CSV files per snapshot"]
-    S3["Amazon S3<br/>Dated snapshot folders"]
-
-    subgraph SF["Snowflake · TA_DATA_DB"]
-        STAGE["External stage<br/>TA_S3_STAGE"]
-        RAW["RAW tables<br/>Snapshots and ingestion metadata"]
-        STG["dbt staging views<br/>Clean, parse and deduplicate"]
-        INT["dbt intermediate views<br/>Validate records and audit history"]
-        MART["Reporting tables<br/>Dimensions and facts"]
-        REJECT["Rejected applications<br/>Reasons retained for inspection"]
-    end
-
-    subgraph LOCAL["Local Docker environment"]
-        AF["Apache Airflow + Cosmos<br/>File checks, loading, dbt tasks<br/>and reporting verification"]
-    end
-
+    S3["Amazon S3<br/>Four TA snapshot CSVs"]
+    EXT["Snowflake external stage<br/>TA_S3_STAGE"]
+    RAW["RAW schema<br/>Four source tables"]
+    STG["dbt staging<br/>Clean and deduplicate"]
+    INT["dbt intermediate<br/>Validate and reconcile"]
+    MART["dbt marts<br/>Dimensions, facts and rejects"]
     BI["Power BI<br/>Planned"]
-    CSV -->|Upload| S3
-    S3 -->|Storage integration and IAM role| STAGE
-    STAGE -->|COPY INTO| RAW
-    RAW --> STG --> INT
-    INT --> MART
-    INT --> REJECT
-    MART -.-> BI
-    AF -.->|Check files and load| STAGE
-    AF -.->|Run models and tests| STG
-    AF -.->|Verify counts and date| MART
+    AIR["Local Airflow + Cosmos<br/>Manual trigger · snapshot_date"]
+    CHECK["Verify reporting<br/>Counts and snapshot date"]
 
-    classDef source fill:#fff3df,stroke:#b87712,color:#222;
-    classDef warehouse fill:#eaf5ff,stroke:#2475a8,color:#222;
-    classDef orchestration fill:#e7f5ef,stroke:#27825b,color:#222;
-    classDef quality fill:#fff0ed,stroke:#bd6452,color:#222;
-    classDef planned fill:#f3f3f3,stroke:#888,color:#444,stroke-dasharray:5 5;
-    class CSV,S3 source;
-    class STAGE,RAW,STG,INT,MART warehouse;
-    class AF orchestration;
-    class REJECT quality;
-    class BI planned;
+    S3 --> EXT -->|COPY INTO| RAW
+    RAW --> STG --> INT --> MART
+    MART -.-> BI
+    AIR -.->|Check files and load| EXT
+    AIR -.->|Run models and tests| STG
+    MART --> CHECK
+    AIR -.->|Run verification| CHECK
+
+    classDef source fill:#e1f3ff,stroke:#3199c9,color:#17364d;
+    classDef stage fill:#fff2cd,stroke:#d8a642,color:#614d26;
+    classDef model fill:#dff8e8,stroke:#54ae7c,color:#204c35;
+    classDef control fill:#eee7ff,stroke:#a38bd1,color:#43305f;
+    classDef future fill:#f2f2f2,stroke:#999,color:#555,stroke-dasharray:5 5;
+    class S3,RAW source;
+    class EXT,CHECK stage;
+    class STG,INT,MART model;
+    class AIR control;
+    class BI future;
 ```
 
-Solid arrows show data flow. Dashed arrows show orchestration or the planned reporting connection. dbt SQL runs in Snowflake; Airflow runs locally in Docker and coordinates the work.
+Solid arrows show data flow. Dashed arrows show orchestration or the planned Power BI integration. Snowflake reads S3 through a storage integration and IAM role. dbt SQL runs in Snowflake; Airflow runs locally in Docker.
+
+## dbt lineage
+
+```mermaid
+flowchart TB
+    subgraph SOURCES["Sources · TA_DATA_DB.RAW"]
+        R["RECRUITERS"]
+        J["JOB_REQUISITIONS"]
+        A["APPLICATIONS"]
+        H["APPLICATION_STATUS_AUDIT"]
+    end
+
+    subgraph STAGING["Staging · clean values, parse dates and remove exact duplicates"]
+        SR["stg_recruiters"]
+        SJ["stg_job_requisition"]
+        SA["stg_applications"]
+        SH["stg_app_status_audit"]
+    end
+
+    subgraph INTERMEDIATE["Intermediate · validation and audit reconciliation"]
+        IJ["int_requisitions_validated<br/>Dates, status and recruiter reference"]
+        IH["int_app_status_audit_validated<br/>Application reference, status and timestamp"]
+        SUM["int_application_audit_summary<br/>Latest valid event and quality counts"]
+        IA["int_applications_validated<br/>Application, requisition and audit checks"]
+    end
+
+    subgraph MARTS["Marts · selected-snapshot reporting"]
+        DR["dim_recruiters"]
+        DJ["dim_requisitions"]
+        FA["fct_applications"]
+        FH["fct_application_status_events"]
+        REJ["rejected_applications<br/>Rejected by data-quality rules"]
+    end
+
+    R --> SR
+    J --> SJ
+    A --> SA
+    H --> SH
+    SR --> DR
+    SR --> IJ
+    SJ --> IJ
+    SA --> IH
+    SH --> IH
+    IH --> SUM
+    SA --> IA
+    IJ --> IA
+    SUM --> IA
+    IJ --> DJ
+    IA --> FA
+    IA --> REJ
+    IH --> FH
+    FA --> FH
+
+    classDef source fill:#e1f3ff,stroke:#3199c9,color:#17364d;
+    classDef model fill:#dff8e8,stroke:#54ae7c,color:#204c35;
+    classDef validation fill:#fff2cd,stroke:#d8a642,color:#614d26;
+    classDef reject fill:#ffebe6,stroke:#ce8c7b,color:#6b3b30;
+    class R,J,A,H source;
+    class SR,SJ,SA,SH,DR,DJ,FA,FH model;
+    class IJ,IH,SUM,IA validation;
+    class REJ reject;
+```
+
+Arrows in this diagram follow the actual `source()` and `ref()` dependencies in the SQL models. They are not execution timing or Power BI relationship arrows. Cosmos also displays the configured tests in Airflow; test nodes are omitted here to keep the model lineage readable.
 
 The layers above are logical layers. RAW data lives in `TA_DATA_DB.RAW`. With the current configuration, staging views, intermediate views, and marts tables all live in `TA_DATA_DB.STAGING`. The dbt folder names do not create separate Snowflake schemas.
 
