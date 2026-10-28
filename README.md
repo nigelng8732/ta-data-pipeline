@@ -10,6 +10,7 @@ I built this project to practise data engineering using a domain I am familiar w
 
 - [Architecture](#architecture)
 - [dbt lineage](#dbt-lineage)
+- [PowerBI Report](#powerbi-report)
 - [Source data](#source-data)
 - [Transformation and reporting models](#transformation-and-reporting-models)
 - [Data quality](#data-quality)
@@ -20,6 +21,7 @@ I built this project to practise data engineering using a domain I am familiar w
 - [Running the project](#running-the-project)
 - [Design choices and limitations](#design-choices-and-limitations)
 - [Next steps](#next-steps)
+
 
 ## Architecture
 
@@ -122,6 +124,10 @@ flowchart TB
 Arrows in this diagram follow the actual `source()` and `ref()` dependencies in the SQL models. They are not execution timing or Power BI relationship arrows. Cosmos also displays the configured tests in Airflow; test nodes are omitted here to keep the model lineage readable.
 
 The layers above are logical layers. RAW data lives in `TA_DATA_DB.RAW`. With the current configuration, staging views, intermediate views, and marts tables all live in `TA_DATA_DB.STAGING`. The dbt folder names do not create separate Snowflake schemas.
+
+## PowerBI Report Preview
+
+![Talent Acquisition dashboard](docs/images/ta-dashboard.png)
 
 ## Source data
 
