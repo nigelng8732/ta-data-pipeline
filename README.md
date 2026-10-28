@@ -266,7 +266,11 @@ ta-data-pipeline/
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   └── docker-compose.override.yml
-├── ta_data_dashboard.pbix        # Power BI Desktop report
+├── pbi/
+│   ├── ta_data_dashboard.pbix        # Power BI Desktop report
+├── docs/
+│   ├── images/
+│   │   ├── ta-dashboard.png        # Preview screenshot of PowerBI report
 ├── data_quality_issues.md
 ├── expected_results.json
 └── project_checklist.md
