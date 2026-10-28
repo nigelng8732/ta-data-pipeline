@@ -10,7 +10,7 @@ I built this project to practise data engineering using a domain I am familiar w
 
 - [Architecture](#architecture)
 - [dbt lineage](#dbt-lineage)
-- [PowerBI Report](#powerbi-report)
+- [PowerBI Report](#powerbi-report-preview)
 - [Source data](#source-data)
 - [Transformation and reporting models](#transformation-and-reporting-models)
 - [Data quality](#data-quality)
