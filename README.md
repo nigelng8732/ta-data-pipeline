@@ -1,19 +1,21 @@
 # Talent Acquisition Data Pipeline
 
-An ELT portfolio project that turns synthetic recruitment snapshots into validated reporting tables using **Amazon S3, Snowflake, dbt, and Apache Airflow**.
+An ELT portfolio project that turns synthetic recruitment snapshots into validated reporting tables using **Amazon S3, Snowflake, dbt, Apache Airflow, and Power BI**.
 
 I built this project to practise data engineering using a domain I am familiar with: talent acquisition. The focus is on handling changing daily extracts, identifying data-quality issues, and making the processing steps repeatable and visible in Airflow.
 
-**Current status:** The manually triggered pipeline has been run successfully for the mock data, including a repeat load and a missing-file failure check. Power BI reporting and daily scheduling are planned.
+**Current status:** The manually triggered pipeline has been run successfully for the mock data, including a repeat load and a missing-file failure check. A Power BI report is included in the repository. Daily scheduling remains planned.
 
 ## Contents
 
 - [Architecture](#architecture)
+- [dbt lineage](#dbt-lineage)
 - [Source data](#source-data)
 - [Transformation and reporting models](#transformation-and-reporting-models)
 - [Data quality](#data-quality)
 - [Orchestration](#orchestration)
 - [Validation results](#validation-results)
+- [Power BI report](#power-bi-report)
 - [Repository structure](#repository-structure)
 - [Running the project](#running-the-project)
 - [Design choices and limitations](#design-choices-and-limitations)
@@ -29,13 +31,13 @@ flowchart LR
     STG["dbt staging<br/>Clean and deduplicate"]
     INT["dbt intermediate<br/>Validate and reconcile"]
     MART["dbt marts<br/>Dimensions, facts and rejects"]
-    BI["Power BI<br/>Planned"]
+    BI["Power BI<br/>TA dashboard"]
     AIR["Local Airflow + Cosmos<br/>Manual trigger · snapshot_date"]
     CHECK["Verify reporting<br/>Counts and snapshot date"]
 
     S3 --> EXT -->|COPY INTO| RAW
     RAW --> STG --> INT --> MART
-    MART -.-> BI
+    MART --> BI
     AIR -.->|Check files and load| EXT
     AIR -.->|Run models and tests| STG
     MART --> CHECK
@@ -45,15 +47,15 @@ flowchart LR
     classDef stage fill:#fff2cd,stroke:#d8a642,color:#614d26;
     classDef model fill:#dff8e8,stroke:#54ae7c,color:#204c35;
     classDef control fill:#eee7ff,stroke:#a38bd1,color:#43305f;
-    classDef future fill:#f2f2f2,stroke:#999,color:#555,stroke-dasharray:5 5;
+    classDef reporting fill:#fff4c2,stroke:#c5a332,color:#5c4b16;
     class S3,RAW source;
     class EXT,CHECK stage;
     class STG,INT,MART model;
     class AIR control;
-    class BI future;
+    class BI reporting;
 ```
 
-Solid arrows show data flow. Dashed arrows show orchestration or the planned Power BI integration. Snowflake reads S3 through a storage integration and IAM role. dbt SQL runs in Snowflake; Airflow runs locally in Docker.
+Solid arrows show data flow. Dashed arrows show orchestration. Snowflake reads S3 through a storage integration and IAM role. dbt SQL runs in Snowflake; Airflow runs locally in Docker.
 
 ## dbt lineage
 
@@ -230,6 +232,16 @@ For the first snapshot, **100 staged applications = 81 valid + 19 rejected**. Th
 
 These are local demonstration results, not evidence of production operation or load testing.
 
+## Power BI report
+
+The project includes a Power BI Desktop report built for the synthetic talent acquisition dataset.
+
+**[Download the TA dashboard (.pbix)](ta_data_dashboard.pbix)**
+
+Download the file and open it in Power BI Desktop to inspect the report and its model. Refreshing from Snowflake requires access to the source account and the appropriate connection settings. The repository does not provide a published Power BI Service report or scheduled report refresh.
+
+The pipeline validation counts above describe the validated Snowflake outputs; they are not a separate audit of the report's measures or visual totals.
+
 ## Repository structure
 
 ```text
@@ -248,6 +260,7 @@ ta-data-pipeline/
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   └── docker-compose.override.yml
+├── ta_data_dashboard.pbix        # Power BI Desktop report
 ├── data_quality_issues.md
 ├── expected_results.json
 └── project_checklist.md
@@ -334,7 +347,7 @@ Keep Snowflake warehouse auto-suspend enabled to limit idle compute usage. Gener
 
 ## Next steps
 
-- Build Power BI visuals for current recruitment activity and historical application progression.
+- Add Power BI report screenshots to the README so visitors can preview the visuals without downloading the file.
 - Add screenshots of the expanded Airflow graph, a successful run and the missing-file failure path.
 - Make the mock fixture generation reproducible from a fresh clone.
 - Replace fixed demo counts with a source manifest or configurable batch contract.
